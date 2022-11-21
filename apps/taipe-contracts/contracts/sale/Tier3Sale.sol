@@ -17,7 +17,7 @@ contract Tier3Sale is SaleDrop, AccessControl {
     mapping(Batch => uint) public batchPrice;
     mapping(Batch => uint) public batchSize;
 
-    uint MAX_INT = 2**256 - 1;
+    uint MAX_INT = type(uint).max;
 
     uint private nftsSold = 0;
 
@@ -71,9 +71,7 @@ contract Tier3Sale is SaleDrop, AccessControl {
         require(!isSoldOut(), "Is sold out");
         require(msg.value >= getPrice(), "Not enough token sent");
         require(minter.tokensLeft() > 0, "No more tokens left");
-        (bool succeed, bytes memory data) = feeRecipient.call{value: msg.value}(
-            ""
-        );
+        (bool succeed, ) = feeRecipient.call{value: msg.value}("");
         require(succeed, "Failed to transfer");
 
         minter.mint(msg.sender);
@@ -116,9 +114,7 @@ contract Tier3Sale is SaleDrop, AccessControl {
     // FALLBACK FUNCTIONS
 
     function withdraw() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        (bool succeed, bytes memory data) = feeRecipient.call{
-            value: address(this).balance
-        }("");
+        (bool succeed, ) = feeRecipient.call{value: address(this).balance}("");
         require(succeed, "Failed to transfer");
     }
 
