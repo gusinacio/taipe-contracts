@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 abstract contract BatchSale is SaleDrop, AccessControl {
-
     struct BatchInfo {
         uint price;
         uint size;
@@ -16,7 +15,12 @@ abstract contract BatchSale is SaleDrop, AccessControl {
     }
 
     event BatchChange(uint indexed newBatch);
-    event Sale(address indexed buyer, uint currentBatch, uint price, uint requestId);
+    event Sale(
+        address indexed buyer,
+        uint currentBatch,
+        uint price,
+        uint requestId
+    );
 
     mapping(uint => BatchInfo) public batchInfo;
 
@@ -28,8 +32,8 @@ abstract contract BatchSale is SaleDrop, AccessControl {
     uint public currentBatch = 0;
     uint private nftsSold = 0;
 
-    address private feeRecipient;
-    VRFMinter private minter;
+    address public feeRecipient;
+    VRFMinter public minter;
 
     constructor(address _minter, address _feeRecipient) {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -49,10 +53,14 @@ abstract contract BatchSale is SaleDrop, AccessControl {
 
     function checkForBatchChange() internal {
         BatchInfo storage batch = batchInfo[currentBatch];
-        if (batch.size == 0) {
-            currentBatch++;
-            emit BatchChange(currentBatch);
+        if (batch.size == 0 || batch.expiration > block.timestamp) {
+            changeBatch();
         }
+    }
+
+    function changeBatch() internal {
+        currentBatch++;
+        emit BatchChange(currentBatch);
     }
 
     // ADMIN FUNCTIONS
@@ -101,6 +109,12 @@ abstract contract BatchSale is SaleDrop, AccessControl {
         // interactions
         uint requestId = minter.mint(_msgSender());
         emit Sale(_msgSender(), currentBatch, price, requestId);
+    }
+
+    function expireCurrentBatch() external {
+        BatchInfo storage batch = batchInfo[currentBatch];
+        require(batch.expiration > block.timestamp, "Batch did not expire");
+        changeBatch();
     }
 
     // VIEW FUNCTIONS
