@@ -5,7 +5,6 @@ import "./SaleDrop.sol";
 import "../minter/VRFMinter.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 abstract contract BatchSale is SaleDrop, AccessControl {
     struct BatchInfo {

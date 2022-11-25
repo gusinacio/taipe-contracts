@@ -11,7 +11,7 @@ const keyHash =
     '0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc';
 
 
-describe.only('BatchSale', () => {
+describe('BatchSale', () => {
     async function deployBatchSale() {
         const [owner, otherAccount] = await ethers.getSigners();
 
