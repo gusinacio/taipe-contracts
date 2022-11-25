@@ -8,13 +8,13 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-contract Tier3Sale is BatchSale {
+contract Tier1Sale is BatchSale {
     constructor(
         address _minter,
         address _feeRecipient
     ) BatchSale(_minter, _feeRecipient) {
-        _setupBatch(2500, MAX_INT, 60 ether);
-        _setupBatch(2500, MAX_INT, 70 ether);
-        _setupBatch(2475, MAX_INT, 80 ether);
+        _setupBatch(5, MAX_INT, 1.25 ether);
+        _setupBatch(5, MAX_INT, 1.25 ether);
+        _setupBatch(4, MAX_INT, 1.25 ether);
     }
 }
