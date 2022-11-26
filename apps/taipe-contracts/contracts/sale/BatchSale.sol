@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 abstract contract BatchSale is SaleDrop, AccessControl {
     struct BatchInfo {
         uint price;
-        uint size;
+        uint sizeLeft;
         uint expiration;
     }
 
@@ -45,14 +45,14 @@ abstract contract BatchSale is SaleDrop, AccessControl {
         batchInfo[batch] = BatchInfo({
             price: _price,
             expiration: _expiration,
-            size: _size
+            sizeLeft: _size
         });
         totalSize += _size;
     }
 
     function checkForBatchChange() internal {
         BatchInfo storage batch = batchInfo[currentBatch];
-        if (batch.size == 0 || batch.expiration > block.timestamp) {
+        if (batch.sizeLeft == 0 || block.timestamp > batch.expiration) {
             changeBatch();
         }
     }
@@ -70,14 +70,17 @@ abstract contract BatchSale is SaleDrop, AccessControl {
         uint _expiration
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(
-            _batch > currentBatch && _batch < totalBatches,
-            "Must be a future batch index"
+            _batch >= currentBatch && _batch < totalBatches,
+            "Must be a current or future batch index"
         );
+        require(_size > 0, "Size must be positive");
+        uint oldSize = batchInfo[_batch].sizeLeft;
         batchInfo[_batch] = BatchInfo({
             price: _price,
             expiration: _expiration,
-            size: _size
+            sizeLeft: _size
         });
+        totalSize = totalSize + _size - oldSize;
     }
 
     function updateFeeRecipient(
@@ -93,26 +96,29 @@ abstract contract BatchSale is SaleDrop, AccessControl {
     }
 
     // BUY FUNCTION
-    function buy() external payable override {
+    function buy() external payable override returns (uint) {
         // checks
-        uint price = getPrice();
         require(!isSoldOut(), "Is sold out");
+        uint price = getPrice();
         require(msg.value >= price, "Not enough token sent");
         (bool succeed, ) = feeRecipient.call{value: msg.value}("");
         require(succeed, "Failed to transfer");
 
         // effects
-        batchInfo[currentBatch].size--;
+        uint batch = currentBatch;
+        batchInfo[batch].sizeLeft--;
         nftsSold++;
         checkForBatchChange();
+
         // interactions
         uint requestId = minter.mint(_msgSender());
-        emit Sale(_msgSender(), currentBatch, price, requestId);
+        emit Sale(_msgSender(), batch, price, requestId);
+        return requestId;
     }
 
     function expireCurrentBatch() external {
         BatchInfo storage batch = batchInfo[currentBatch];
-        require(batch.expiration > block.timestamp, "Batch did not expire");
+        require(block.timestamp > batch.expiration, "Batch did not expire");
         changeBatch();
     }
 

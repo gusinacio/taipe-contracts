@@ -8,6 +8,6 @@ interface SaleDrop {
 
     function getTotalSold() external view returns (uint256);
 
-    function buy() external payable;
+    function buy() external payable returns (uint);
     
 }
