@@ -1,3 +1,6 @@
+import { Signer } from 'ethers';
+import { BatchSale__factory, TaipeNFT__factory, VRFMinter__factory } from '../typechain-types';
+
 export * from '../typechain-types';
 
 export enum Network {
@@ -11,6 +14,19 @@ export enum Tier {
   Tier1 = 0,
   Tier2 = 1,
   Tier3 = 2,
+}
+
+export const TIER1_SALE_ADDRESS = {
+  [Network.Goerli]: '0x6746bc300eF27ED04D57A28402fBCf85d430AB5F',
+}
+
+export const TIER3_SALE_ADDRESS = {
+  [Network.Mumbai]: '0x193277Cd4bBf05F3A810cC113Ac5437c307184bC',
+}
+
+export const SALE_ADDRESS = {
+  [Tier.Tier1]: TIER1_SALE_ADDRESS,
+  [Tier.Tier3]: TIER3_SALE_ADDRESS,
 }
 
 export const TAIPE_ADDRESS: { [key in Network]: string } = {
@@ -46,3 +62,16 @@ export const FEE_RECIPIENT_ADDRESS: { [key in Network]: string } = {
   [Network.Polygon]: '0x1D449CcF8c61748f4c633EEBDA62efCd93F4afEB',
   [Network.Ethereum]: '0xC2c179B207fc6ACf5D6AfDd75aC69C19ecB909f1',
 };
+
+
+export function getVrfMinterContract(network: Network, tier: Tier, signer: Signer) {
+  return VRFMinter__factory.connect(MINTER_ADDRESS[tier][network], signer);
+}
+
+export function getNftContract(network: Network, signer: Signer) {
+  return TaipeNFT__factory.connect(TAIPE_ADDRESS[network], signer);
+}
+
+export function getSaleContract(network: Network, tier: Tier, signer: Signer) {
+  return BatchSale__factory.connect(SALE_ADDRESS[tier][network], signer);
+}
