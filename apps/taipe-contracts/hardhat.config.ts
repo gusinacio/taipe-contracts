@@ -20,12 +20,7 @@ const config: HardhatUserConfig = {
   abiExporter: {
     clear: true,
     only: [
-      'IMinter',
-      'IERC721',
-      'TaipeNFT',
-      'EthereumTaipe',
-      'PolygonTaipe',
-      'VRFMinter',
+      'BatchSale'
     ],
   },
 
