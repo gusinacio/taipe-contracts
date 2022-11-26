@@ -50,6 +50,7 @@ export const TIER3_MINTER_ADDRESS = {
   [Network.Mumbai]: '0xAdCc8688C19999E2882a98D5956E0E68F978eD43',
   [Network.Polygon]: '0xA05240DD88B3D579ab98Dcdca3F07eb9231e0089',
 };
+
 export const MINTER_ADDRESS = {
   [Tier.Tier1]: TIER1_MINTER_ADDRESS,
   [Tier.Tier2]: TIER2_MINTER_ADDRESS,
@@ -63,13 +64,12 @@ export const FEE_RECIPIENT_ADDRESS: { [key in Network]: string } = {
   [Network.Ethereum]: '0xC2c179B207fc6ACf5D6AfDd75aC69C19ecB909f1',
 };
 
+export function getNftContract(network: Network, signer: Signer) {
+  return TaipeNFT__factory.connect(TAIPE_ADDRESS[network], signer);
+}
 
 export function getVrfMinterContract(network: Network, tier: Tier, signer: Signer) {
   return VRFMinter__factory.connect(MINTER_ADDRESS[tier][network], signer);
-}
-
-export function getNftContract(network: Network, signer: Signer) {
-  return TaipeNFT__factory.connect(TAIPE_ADDRESS[network], signer);
 }
 
 export function getSaleContract(network: Network, tier: Tier, signer: Signer) {
