@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat';
-import { MINTER_ADDRESS, Network, TAIPE_ADDRESS, Tier } from '../../src';
+import { MINTER_ADDRESS, Network, SALE_ADDRESS, TAIPE_ADDRESS, Tier, Tier1Sale__factory, Tier3Sale__factory } from '../../src';
 import {
   getRelayerSigner,
   isEthereumNetwork,
@@ -35,3 +35,18 @@ export async function getVRFMinter(network: Network, tier: Tier) {
   const Contract = await ethers.getContractFactory('VRFMinter');
   return Contract.attach(contractAddress).connect(signer);
 }
+
+export async function getSaleContract(network: Network, tier: Tier) {
+  const signer = getRelayerSigner(network);
+
+  const contractAddress = SALE_ADDRESS[tier][network];
+  if (!contractAddress)
+    throw new Error('`Contract not found for tier ${tier} on ${network}`');
+  let Contract: Tier1Sale__factory | Tier3Sale__factory;
+  if (tier === Tier.Tier1)
+    Contract = await ethers.getContractFactory('Tier1Sale');
+  else
+    Contract = await ethers.getContractFactory('Tier3Sale');
+  return Contract.attach(contractAddress).connect(signer);
+}
+
