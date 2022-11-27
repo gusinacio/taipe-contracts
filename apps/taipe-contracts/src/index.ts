@@ -1,3 +1,4 @@
+import { Provider } from '@ethersproject/providers';
 import { Signer } from 'ethers';
 import { BatchSale__factory, TaipeNFT__factory, VRFMinter__factory } from '../typechain-types';
 
@@ -17,11 +18,11 @@ export enum Tier {
 }
 
 export const TIER1_SALE_ADDRESS = {
-  [Network.Goerli]: '0x6746bc300eF27ED04D57A28402fBCf85d430AB5F',
+  [Network.Goerli]: '0xb9a2E838D8bB70fC41A534eb5b13d42cE8a7b357',
 }
 
 export const TIER3_SALE_ADDRESS = {
-  [Network.Mumbai]: '0x193277Cd4bBf05F3A810cC113Ac5437c307184bC',
+  [Network.Mumbai]: '0x93f59f5389D7F2871632883E8C0934500166431F',
 }
 
 export const SALE_ADDRESS = {
@@ -64,14 +65,17 @@ export const FEE_RECIPIENT_ADDRESS: { [key in Network]: string } = {
   [Network.Ethereum]: '0xC2c179B207fc6ACf5D6AfDd75aC69C19ecB909f1',
 };
 
-export function getNftContract(network: Network, signer: Signer) {
-  return TaipeNFT__factory.connect(TAIPE_ADDRESS[network], signer);
+export function getNftContract(network: Network, providerOrSigner: Provider | Signer) {
+  if (!TAIPE_ADDRESS[network]) throw new Error(`No NFT contract for network ${network}`);
+  return TaipeNFT__factory.connect(TAIPE_ADDRESS[network], providerOrSigner);
 }
 
-export function getVrfMinterContract(network: Network, tier: Tier, signer: Signer) {
-  return VRFMinter__factory.connect(MINTER_ADDRESS[tier][network], signer);
+export function getVrfMinterContract(network: Network, tier: Tier, providerOrSigner: Provider | Signer) {
+  if (!MINTER_ADDRESS[tier][network]) throw new Error(`No minter contract for tier ${tier} on network ${network}`);
+  return VRFMinter__factory.connect(MINTER_ADDRESS[tier][network], providerOrSigner);
 }
 
-export function getSaleContract(network: Network, tier: Tier, signer: Signer) {
-  return BatchSale__factory.connect(SALE_ADDRESS[tier][network], signer);
+export function getSaleContract(network: Network, tier: Tier, providerOrSigner: Provider | Signer) {
+  if (!SALE_ADDRESS[tier][network]) throw new Error(`No sale contract for tier ${tier} on network ${network}`);
+  return BatchSale__factory.connect(SALE_ADDRESS[tier][network], providerOrSigner);
 }
