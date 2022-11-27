@@ -7,7 +7,7 @@
     "lint": "solhint 'contracts/**/*.sol'",
     "test": "hardhat test",
     "coverage": "hardhat coverage",
-    "build": "rimraf dist && tsc  -p tsconfig.build.json",
+    "build": "yarn compiole && rimraf dist && tsc  -p tsconfig.build.json",
     "compile": "hardhat compile",
     "codegen": "hardhat typechain",
     "build:shared": "yarn --cwd='../..' turbo run build --scope=shared --no-deps",
