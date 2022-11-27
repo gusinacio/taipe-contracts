@@ -140,6 +140,10 @@ abstract contract BatchSale is SaleDrop, AccessControl {
         return nftsSold;
     }
 
+    function getTotalLeft() external view override returns (uint) {
+        return totalSize - nftsSold;
+    }
+
     // FALLBACK FUNCTIONS
 
     function withdraw() external onlyRole(DEFAULT_ADMIN_ROLE) {
