@@ -5,6 +5,7 @@ import "./SaleDrop.sol";
 import "../minter/VRFMinter.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import '@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol';
 
 abstract contract BatchSale is SaleDrop, AccessControl {
     struct BatchInfo {
@@ -101,8 +102,6 @@ abstract contract BatchSale is SaleDrop, AccessControl {
         require(!isSoldOut(), "Is sold out");
         uint price = getPrice();
         require(msg.value >= price, "Not enough token sent");
-        (bool succeed, ) = feeRecipient.call{value: msg.value}("");
-        require(succeed, "Failed to transfer");
 
         // effects
         uint batch = currentBatch;
@@ -147,12 +146,12 @@ abstract contract BatchSale is SaleDrop, AccessControl {
     // FALLBACK FUNCTIONS
 
     function withdraw() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        (bool succeed, ) = feeRecipient.call{value: address(this).balance}("");
-        require(succeed, "Failed to transfer");
+        uint balance = address(this).balance;
+        TransferHelper.safeTransferETH(feeRecipient, balance);
     }
 
     function withdrawERC20(address addr) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        IERC20 erc20 = IERC20(addr);
-        erc20.transfer(feeRecipient, erc20.balanceOf(address(this)));
+        uint balance = IERC20(addr).balanceOf(address(this));
+        TransferHelper.safeTransfer(addr, feeRecipient, balance);
     }
 }

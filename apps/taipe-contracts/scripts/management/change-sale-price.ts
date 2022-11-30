@@ -5,8 +5,8 @@ import { Network, Tier } from '../../src';
 import { getSaleContract } from '../utils/contract';
 
 async function main() {
-  const network = Network.Mumbai;
-  const tier = Tier.Tier3;
+  const network = Network.Goerli;
+  const tier = Tier.Tier1;
   const contract = await getSaleContract(network, tier);
 
   const currentBatch = await contract.currentBatch();
