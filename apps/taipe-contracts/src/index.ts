@@ -29,7 +29,7 @@ export const TIER3_SALE_ADDRESS = {
   [Network.Mumbai]: '0x93f59f5389D7F2871632883E8C0934500166431F',
 };
 
-export const getTierByAddress = (address: string) => {
+export const getTierBySaleAddress = (address: string) => {
   const tier1 = Object.values(TIER1_SALE_ADDRESS).filter(tierAddress => tierAddress === address);
   if (tier1.length) return 1;
   const tier3 = Object.values(TIER3_SALE_ADDRESS).filter(tierAddress => tierAddress === address);
