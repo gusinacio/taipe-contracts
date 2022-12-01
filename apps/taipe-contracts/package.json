@@ -8,7 +8,7 @@
     "test": "hardhat test",
     "echidna:bridge": "./echidna-test . --contract BridgeEchidna --config echidna.config.yaml",
     "echidna:minter": "./echidna-test . --contract MinterEchidna --config echidna.config.yaml",
-    "echidna": "yarn echidna:bridg && yarn echidna:minter",
+    "echidna": "yarn echidna:bridge && yarn echidna:minter",
     "coverage": "hardhat coverage",
     "build": "yarn compile && rimraf dist && tsc  -p tsconfig.build.json",
     "compile": "hardhat compile",
