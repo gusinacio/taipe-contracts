@@ -1,6 +1,10 @@
 import { Provider } from '@ethersproject/providers';
 import { Signer } from 'ethers';
-import { BatchSale__factory, TaipeNFT__factory, VRFMinter__factory } from '../typechain-types';
+import {
+  BatchSale__factory,
+  TaipeNFT__factory,
+  VRFMinter__factory,
+} from '../typechain-types';
 
 export * from '../typechain-types';
 
@@ -19,16 +23,24 @@ export enum Tier {
 
 export const TIER1_SALE_ADDRESS = {
   [Network.Goerli]: '0xb9a2E838D8bB70fC41A534eb5b13d42cE8a7b357',
-}
+};
 
 export const TIER3_SALE_ADDRESS = {
   [Network.Mumbai]: '0x93f59f5389D7F2871632883E8C0934500166431F',
-}
+};
+
+export const getTierBySaleAddress = (address: string) => {
+  const tier1 = Object.values(TIER1_SALE_ADDRESS).filter(tierAddress => tierAddress === address);
+  if (tier1.length) return 1;
+  const tier3 = Object.values(TIER3_SALE_ADDRESS).filter(tierAddress => tierAddress === address);
+  if (tier3.length) return 3;
+  throw new Error(`Tier for ${address} is not defined`);
+};
 
 export const SALE_ADDRESS = {
   [Tier.Tier1]: TIER1_SALE_ADDRESS,
   [Tier.Tier3]: TIER3_SALE_ADDRESS,
-}
+};
 
 export const TAIPE_ADDRESS: { [key in Network]: string } = {
   [Network.Goerli]: '0x94E45dCE34b3030dEDdB72C2D41f20444ef5D4CE',
@@ -65,17 +77,39 @@ export const FEE_RECIPIENT_ADDRESS: { [key in Network]: string } = {
   [Network.Ethereum]: '0xC2c179B207fc6ACf5D6AfDd75aC69C19ecB909f1',
 };
 
-export function getNftContract(network: Network, providerOrSigner: Provider | Signer) {
-  if (!TAIPE_ADDRESS[network]) throw new Error(`No NFT contract for network ${network}`);
+export function getNftContract(
+  network: Network,
+  providerOrSigner: Provider | Signer,
+) {
+  if (!TAIPE_ADDRESS[network])
+    throw new Error(`No NFT contract for network ${network}`);
   return TaipeNFT__factory.connect(TAIPE_ADDRESS[network], providerOrSigner);
 }
 
-export function getVrfMinterContract(network: Network, tier: Tier, providerOrSigner: Provider | Signer) {
-  if (!MINTER_ADDRESS[tier][network]) throw new Error(`No minter contract for tier ${tier} on network ${network}`);
-  return VRFMinter__factory.connect(MINTER_ADDRESS[tier][network], providerOrSigner);
+export function getVrfMinterContract(
+  network: Network,
+  tier: Tier,
+  providerOrSigner: Provider | Signer,
+) {
+  if (!MINTER_ADDRESS[tier][network])
+    throw new Error(
+      `No minter contract for tier ${tier} on network ${network}`,
+    );
+  return VRFMinter__factory.connect(
+    MINTER_ADDRESS[tier][network],
+    providerOrSigner,
+  );
 }
 
-export function getSaleContract(network: Network, tier: Tier, providerOrSigner: Provider | Signer) {
-  if (!SALE_ADDRESS[tier][network]) throw new Error(`No sale contract for tier ${tier} on network ${network}`);
-  return BatchSale__factory.connect(SALE_ADDRESS[tier][network], providerOrSigner);
+export function getSaleContract(
+  network: Network,
+  tier: Tier,
+  providerOrSigner: Provider | Signer,
+) {
+  if (!SALE_ADDRESS[tier][network])
+    throw new Error(`No sale contract for tier ${tier} on network ${network}`);
+  return BatchSale__factory.connect(
+    SALE_ADDRESS[tier][network],
+    providerOrSigner,
+  );
 }
