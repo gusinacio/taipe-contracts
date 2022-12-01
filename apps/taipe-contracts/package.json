@@ -6,7 +6,9 @@
   "scripts": {
     "lint": "solhint 'contracts/**/*.sol'",
     "test": "hardhat test",
-    "echidna": "./echidna-test . --contract BridgeEchidna --contract MinterEchidna --config echidna.config.yaml",
+    "echidna:bridge": "./echidna-test . --contract BridgeEchidna --config echidna.config.yaml",
+    "echidna:minter": "./echidna-test . --contract MinterEchidna --config echidna.config.yaml",
+    "echidna": "yarn echidna:bridg && yarn echidna:minter",
     "coverage": "hardhat coverage",
     "build": "yarn compile && rimraf dist && tsc  -p tsconfig.build.json",
     "compile": "hardhat compile",
