@@ -8,13 +8,13 @@
     "test": "hardhat test",
     "echidna:bridge": "./echidna-test . --contract BridgeEchidna --config echidna.config.yaml",
     "echidna:minter": "./echidna-test . --contract MinterEchidna --config echidna.config.yaml",
-    "echidna": "yarn echidna:bridge && yarn echidna:minter",
+    "echidna": "pnpm echidna:bridge && pnpm echidna:minter",
     "coverage": "hardhat coverage",
-    "build": "yarn compile && rimraf dist && tsc  -p tsconfig.build.json",
+    "build": "pnpm compile && rimraf dist && tsc  -p tsconfig.build.json",
     "compile": "hardhat compile",
     "codegen": "hardhat typechain",
-    "build:shared": "yarn --cwd='../..' turbo run build --scope=shared --no-deps",
-    "build:dependencies": "yarn build:shared"
+    "build:shared": "pnpm --cwd='../..' turbo run build --scope=shared --no-deps",
+    "build:dependencies": "pnpm build:shared"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.6.4",
@@ -33,17 +33,19 @@
     "hardhat-gas-reporter": "^1.0.8",
     "prettier": "^2.7.1",
     "prettier-plugin-solidity": "^1.0.0-beta.24",
-    "shared": "*",
+    "rimraf": "^3.0.2",
+    "shared": "workspace:*",
     "solhint": "3.3.6",
     "solhint-plugin-prettier": "^0.0.5",
     "solidity-coverage": "^0.7.21",
-    "tsconfig": "*",
+    "tsconfig": "workspace:*",
     "typechain": "^8.1.0",
     "typescript": "^4.8.4"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.4.2",
     "@openzeppelin/contracts": "^4.7.3",
-    "defender-relay-client": "^1.30.0"
+    "defender-relay-client": "^1.30.0",
+    "dotenv": "^16.0.2"
   }
 }
