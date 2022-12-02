@@ -13,7 +13,7 @@
     "build": "pnpm compile && rimraf dist && tsc  -p tsconfig.build.json",
     "compile": "hardhat compile",
     "codegen": "hardhat typechain",
-    "build:shared": "pnpm --cwd='../..' turbo run build --scope=shared --no-deps",
+    "build:shared": "pnpm -w turbo run build --scope=shared --no-deps",
     "build:dependencies": "pnpm build:shared"
   },
   "devDependencies": {
