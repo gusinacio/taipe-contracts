@@ -1,7 +1,7 @@
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { constants, utils } from 'ethers';
-import { ethers } from 'hardhat';
+import { ethers, upgrades } from 'hardhat';
 import { Tier } from './utils/utils';
 import { getBlock, advanceTimeAndBlock } from './helpers/time';
 
@@ -49,7 +49,7 @@ describe('BatchSale', () => {
 
         await minter.grantRole(await minter.MINTER_ROLE(), owner.address);
         const Tier1Sale = await ethers.getContractFactory('Tier1Sale');
-        const sale = await Tier1Sale.deploy(minter.address, feeRecipient.address);
+        const sale = await upgrades.deployProxy(Tier1Sale, [minter.address, feeRecipient.address])
 
         await minter.grantRole(await minter.MINTER_ROLE(), sale.address);
 
