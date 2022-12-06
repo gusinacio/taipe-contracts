@@ -2,10 +2,16 @@ import * as dotenv from 'dotenv';
 
 import '@nomicfoundation/hardhat-toolbox';
 import 'hardhat-abi-exporter';
-import { HardhatUserConfig } from 'hardhat/config';
+import '@openzeppelin/hardhat-upgrades';
+import { extendEnvironment, HardhatUserConfig } from 'hardhat/config';
 import { getNetworkConfig } from 'shared';
 
 dotenv.config();
+
+
+// extendEnvironment((hre) => {
+//   hre.network.provider = undefined;
+// });
 
 const config: HardhatUserConfig = {
   solidity: {

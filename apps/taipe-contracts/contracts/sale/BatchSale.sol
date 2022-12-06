@@ -3,10 +3,12 @@ pragma solidity ^0.8.9;
 
 import "./SaleDrop.sol";
 import "../minter/VRFMinter.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-abstract contract BatchSale is SaleDrop, AccessControl {
+abstract contract BatchSale is SaleDrop, AccessControlUpgradeable, UUPSUpgradeable {
     struct BatchInfo {
         uint price;
         uint sizeLeft;
@@ -26,15 +28,15 @@ abstract contract BatchSale is SaleDrop, AccessControl {
     uint public totalBatches;
     uint public totalSize;
 
-    uint MAX_INT = type(uint).max;
+    uint constant MAX_INT = type(uint).max;
 
-    uint public currentBatch = 0;
-    uint private nftsSold = 0;
+    uint public currentBatch;
+    uint private nftsSold;
 
     address public feeRecipient;
     VRFMinter public minter;
 
-    constructor(address _minter, address _feeRecipient) {
+    function initialize(address _minter, address _feeRecipient) public virtual onlyInitializing {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         minter = VRFMinter(_minter);
         feeRecipient = _feeRecipient;
@@ -155,4 +157,8 @@ abstract contract BatchSale is SaleDrop, AccessControl {
         IERC20 erc20 = IERC20(addr);
         erc20.transfer(feeRecipient, erc20.balanceOf(address(this)));
     }
+
+    // UPGRADE
+
+    function _authorizeUpgrade(address) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
 }

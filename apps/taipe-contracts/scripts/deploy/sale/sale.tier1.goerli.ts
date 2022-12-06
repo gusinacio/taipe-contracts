@@ -1,4 +1,4 @@
-import { ethers } from 'hardhat';
+import { ethers, upgrades } from 'hardhat';
 import { getVRFMinter } from '../../utils/contract';
 import { FEE_RECIPIENT_ADDRESS, MINTER_ADDRESS, Network, Tier } from '../../../src';
 import { getRelayerSigner } from '../../utils/signers';
@@ -11,11 +11,15 @@ async function main() {
     const feeRecipient = FEE_RECIPIENT_ADDRESS[network];
     const minter = MINTER_ADDRESS[tier][network];
 
-    const Tier1Sale = await ethers.getContractFactory('Tier1Sale');
-    const saleTier1 = await Tier1Sale.connect(signer).deploy(minter, feeRecipient);
+    const Tier1Sale = await ethers.getContractFactory('Tier1Sale', signer);
+    
+    const saleTier1 = await upgrades.deployProxy(Tier1Sale, [minter, feeRecipient], {
+        kind: 'uups',
+    });
 
-    await saleTier1.deployed();
-    console.log('Sale Tier1 deployed to:', saleTier1.address);
+    const tier1Deployed = await saleTier1.deployed();
+    console.log('Sale Tier1 deployed tx hash:', saleTier1.deployTransaction.hash);
+    console.log('Sale Tier1 deployed to:', tier1Deployed.address);
 
     const contract = await getVRFMinter(network, tier);
     const minterRole = await contract.MINTER_ROLE();
