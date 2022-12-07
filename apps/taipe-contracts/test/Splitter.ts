@@ -64,6 +64,7 @@ describe('Splitter', () => {
           const twoPercent = value.mul(2).div(100);
     
           expect(releasable).to.be.eq(twoPercent);
+          const balanceBefore = await splitter.provider.getBalance(addr);
 
           const tx = await splitter['release(address)'](addr);
           tx.wait();
@@ -71,7 +72,7 @@ describe('Splitter', () => {
           const balanceOfAddr = await splitter.provider.getBalance(addr);
           const releasableAfter = await splitter['releasable(address)'](addr)
 
-          expect(balanceOfAddr).to.be.eq(twoPercent);
+          expect(balanceOfAddr).to.be.eq(balanceBefore.add(twoPercent));
           expect(releasableAfter).to.be.eq(0);
     });
   });
