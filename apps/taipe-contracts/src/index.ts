@@ -28,7 +28,7 @@ export const TIER1_SALE_ADDRESS = {
 
 export const TIER3_SALE_ADDRESS = {
   [Network.Mumbai]: '0xE7B46524456Ac7De51b11DEae55601F23e1Ae5dD',
-  [Network.Polygon]: '0xae0C4b263D2f9E68febB091c435085525395DBe4e',
+  [Network.Polygon]: '0xae0C4b263D2f9E68febB091c435085525395DBe4',
 };
 
 export const getTierBySaleAddress = (address: string) => {
