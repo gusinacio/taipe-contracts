@@ -7,67 +7,71 @@ import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "../interfaces/IWETH9.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/IPeripheryImmutableState.sol";
 import "@chainlink/contracts/src/v0.4/interfaces/AggregatorV3Interface.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-abstract contract UniswapConsumer is AccessControl {
-    address public immutable NATIVE_TOKEN;
+abstract contract UniswapConsumer is AccessControlUpgradeable, UUPSUpgradeable {
+    address public NATIVE_TOKEN;
     address public DESIRED_TOKEN;
-    uint24 public poolFee = 500;
+    uint24 public poolFee;
 
-    ISwapRouter public immutable swapRouter;
+    ISwapRouter public swapRouter;
 
     AggregatorV3Interface internal priceFeed;
 
-    constructor(
+    function initialize(
         address _swapRouter,
         address _desiredToken,
         address _priceFeed
-    ) {
+    ) public virtual onlyInitializing {
         swapRouter = ISwapRouter(_swapRouter);
         NATIVE_TOKEN = IPeripheryImmutableState(_swapRouter).WETH9();
         DESIRED_TOKEN = _desiredToken;
         priceFeed = AggregatorV3Interface(_priceFeed);
+        poolFee = 500;
     }
 
-    function updatePriceFeed(address _priceFeed)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function updatePriceFeed(
+        address _priceFeed
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         priceFeed = AggregatorV3Interface(_priceFeed);
     }
 
-    function updateDesiredToken(address _desiredToken)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function updateDesiredToken(
+        address _desiredToken
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         DESIRED_TOKEN = _desiredToken;
     }
 
-    function updatePoolFee(uint24 _poolFee)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function updatePoolFee(
+        uint24 _poolFee
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         poolFee = _poolFee;
     }
 
-    function swapTokenToDesired(uint amountIn, address token)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function swapTokenToDesired(
+        uint amountIn,
+        address token
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         uint amountOutMinimum = 0;
 
         swap(amountIn, token, DESIRED_TOKEN, poolFee, amountOutMinimum);
     }
 
-    function swapNativeToDesired(uint amountIn)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function swapNativeToDesired(
+        uint amountIn
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         IWETH9(NATIVE_TOKEN).deposit{value: amountIn}();
 
         uint amountOutMinimum = amountIn * uint(getLatestPrice());
 
-        swap(amountIn, address(NATIVE_TOKEN), DESIRED_TOKEN, poolFee, amountOutMinimum);
+        swap(
+            amountIn,
+            address(NATIVE_TOKEN),
+            DESIRED_TOKEN,
+            poolFee,
+            amountOutMinimum
+        );
     }
 
     function swap(
@@ -99,7 +103,7 @@ abstract contract UniswapConsumer is AccessControl {
         (
             ,
             /*uint80 roundID*/
-            int price, /*uint startedAt*/ /*uint timeStamp*/ /*uint80 answeredInRound*/
+            int price /*uint startedAt*/ /*uint timeStamp*/ /*uint80 answeredInRound*/,
             ,
             ,
 

@@ -6,7 +6,6 @@ import "../minter/VRFMinter.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import '@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol';
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 abstract contract BatchSale is SaleDrop, AccessControlUpgradeable, UUPSUpgradeable {
