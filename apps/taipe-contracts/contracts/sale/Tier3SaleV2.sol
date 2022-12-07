@@ -6,11 +6,11 @@ import "./UniswapConsumer.sol";
 
 contract Tier3SaleV2 is BatchSale, UniswapConsumer {
 
-    function initialize(
+    function initializeUniswap(
         address _swapRouter,
         address _desiredToken,
         address _priceFeed
-    ) public override reinitializer(2) {
+    ) public reinitializer(2) {
         UniswapConsumer.initialize(
             _swapRouter,
             _desiredToken,

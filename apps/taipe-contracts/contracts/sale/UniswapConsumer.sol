@@ -23,7 +23,7 @@ abstract contract UniswapConsumer is AccessControlUpgradeable, UUPSUpgradeable {
         address _swapRouter,
         address _desiredToken,
         address _priceFeed
-    ) public virtual onlyInitializing {
+    ) internal virtual onlyInitializing {
         swapRouter = ISwapRouter(_swapRouter);
         NATIVE_TOKEN = IPeripheryImmutableState(_swapRouter).WETH9();
         DESIRED_TOKEN = _desiredToken;
@@ -62,16 +62,11 @@ abstract contract UniswapConsumer is AccessControlUpgradeable, UUPSUpgradeable {
         uint amountIn
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         IWETH9(NATIVE_TOKEN).deposit{value: amountIn}();
-
-        uint amountOutMinimum = amountIn * uint(getLatestPrice());
-
-        swap(
-            amountIn,
-            address(NATIVE_TOKEN),
-            DESIRED_TOKEN,
-            poolFee,
-            amountOutMinimum
-        );
+        uint8 decimals = priceFeed.decimals();
+        uint amountOutMinimum = (amountIn / uint(getLatestPrice())) *
+            (10 ** decimals);
+        amountOutMinimum -= amountOutMinimum / 100 * 1; // 1% slippage
+        swap(amountIn, address(NATIVE_TOKEN), DESIRED_TOKEN, poolFee, amountOutMinimum);
     }
 
     function swap(
