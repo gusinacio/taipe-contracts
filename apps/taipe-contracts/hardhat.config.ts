@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import '@nomicfoundation/hardhat-toolbox';
 import 'hardhat-abi-exporter';
 import '@openzeppelin/hardhat-upgrades';
+import "hardhat-live-fork";
 import { HardhatUserConfig } from 'hardhat/config';
 import { getNetworkConfig } from 'shared';
 
@@ -26,6 +27,12 @@ const config: HardhatUserConfig = {
   },
 
   networks: {
+    hardhat: {
+      forking: {
+        enabled: true,
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`,
+      },
+    },
     mainnet: {
       url: getNetworkConfig(1).rpcUrl,
     },
@@ -39,6 +46,7 @@ const config: HardhatUserConfig = {
       url: getNetworkConfig(80001).rpcUrl,
     },
   },
+  liveFork: {},
   etherscan: {
     apiKey: {
       goerli: process.env.GOERLI_ETHERSCAN_API_KEY || '',
