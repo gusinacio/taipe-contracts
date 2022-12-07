@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 import "./BatchSale.sol";
 import "./UniswapConsumer.sol";
 
-contract Tier1Sale is BatchSale, UniswapConsumer {
+contract Tier1SaleV2 is BatchSale, UniswapConsumer {
 
     function initialize(
         address _swapRouter,
