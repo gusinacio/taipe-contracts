@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 
 import '@nomicfoundation/hardhat-toolbox';
 import 'hardhat-abi-exporter';
+import '@openzeppelin/hardhat-upgrades';
 import { HardhatUserConfig } from 'hardhat/config';
 import { getNetworkConfig } from 'shared';
 

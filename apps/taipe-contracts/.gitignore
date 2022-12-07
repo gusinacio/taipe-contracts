@@ -12,3 +12,9 @@ artifacts
 # echidna
 crytic-export
 arguments.js
+
+// .gitignore
+# OpenZeppelin
+.openzeppelin/dev-*.json
+.openzeppelin/unknown-*.json
+.openzeppelin/.session

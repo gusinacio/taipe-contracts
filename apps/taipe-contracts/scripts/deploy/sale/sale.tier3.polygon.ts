@@ -9,7 +9,7 @@ import {
 import { getRelayerSigner } from '../../utils/signers';
 
 async function main() {
-  const network = Network.Mumbai;
+  const network = Network.Polygon;
   const signer = getRelayerSigner(network);
   const tier = Tier.Tier3;
 

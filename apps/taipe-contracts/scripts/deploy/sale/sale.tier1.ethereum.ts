@@ -4,7 +4,7 @@ import { FEE_RECIPIENT_ADDRESS, MINTER_ADDRESS, Network, Tier } from '../../../s
 import { getRelayerSigner } from '../../utils/signers';
 
 async function main() {
-    const network = Network.Goerli
+    const network = Network.Ethereum;
     const signer = getRelayerSigner(network);
     const tier = Tier.Tier1;
 

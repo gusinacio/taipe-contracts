@@ -1,9 +1,10 @@
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { constants, utils } from 'ethers';
-import { ethers } from 'hardhat';
+import { ethers, upgrades } from 'hardhat';
 import { Tier } from './utils/utils';
 import { getBlock, advanceTimeAndBlock } from './helpers/time';
+import { Tier1Sale } from 'typechain-types';
 
 const BASE_FEE = '1000';
 const GAS_PRICE_LINK = '1000000000'; // 0.000000001 LINK per gas
@@ -49,7 +50,7 @@ describe('BatchSale', () => {
 
         await minter.grantRole(await minter.MINTER_ROLE(), owner.address);
         const Tier1Sale = await ethers.getContractFactory('Tier1Sale');
-        const sale = await Tier1Sale.deploy(minter.address, feeRecipient.address);
+        const sale = await upgrades.deployProxy(Tier1Sale, [minter.address, feeRecipient.address]) as Tier1Sale
 
         await minter.grantRole(await minter.MINTER_ROLE(), sale.address);
 
@@ -129,7 +130,7 @@ describe('BatchSale', () => {
 
     describe('Buy', () => {
         it('should buy an nft', async () => {
-            const { sale, otherAccount, vrfCoordinator, minter, taipe, feeRecipient } = await loadFixture(deployBatchSale);
+            const { sale, otherAccount, vrfCoordinator, minter, taipe } = await loadFixture(deployBatchSale);
 
             const price = await sale.getPrice();
             const currentBatch = await sale.currentBatch();
@@ -137,7 +138,7 @@ describe('BatchSale', () => {
                 value: price
             });
 
-            const oldFeeBalance = await feeRecipient.getBalance();
+            const oldFeeBalance = await ethers.provider.getBalance(sale.address);
             await expect(sale.connect(otherAccount).buy({
                 value: price
             })).to.emit(sale, 'Sale').withArgs(otherAccount.address, currentBatch, price, requestId)
@@ -153,7 +154,7 @@ describe('BatchSale', () => {
 
             const expectedBatch  = await sale.currentBatch();
             const expectedPrice = await sale.getPrice();
-            const expectedBalance = await feeRecipient.getBalance();
+            const expectedBalance = await ethers.provider.getBalance(sale.address);
 
             expect(expectedBatch).to.equal(currentBatch);
             expect(expectedPrice).to.equal(price);
@@ -231,5 +232,25 @@ describe('BatchSale', () => {
             await expect(sale.expireCurrentBatch()).to.be.revertedWith('Batch did not expire');
         })
     })
+
+    describe('Withdraw', () => {
+        it('should withdraw to fee recipient', async () => {
+            const { sale, otherAccount, feeRecipient } = await loadFixture(deployBatchSale);
+
+            const price = await sale.getPrice();
+            const tx = await sale.connect(otherAccount).buy({
+                value: price
+            });
+            await tx.wait();
+            const oldFeeBalance = await feeRecipient.getBalance();
+
+            const withdrawTx = await sale.withdraw();
+            await withdrawTx.wait();
+            
+            const expectedBalance = await feeRecipient.getBalance();
+
+            expect(expectedBalance).to.equal(oldFeeBalance.add(price));
+        });
+    });
 
 });
