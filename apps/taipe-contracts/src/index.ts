@@ -23,10 +23,12 @@ export enum Tier {
 
 export const TIER1_SALE_ADDRESS = {
   [Network.Goerli]: '0x4637C375681E205A6be6A6d38b2fC419b47eC7Ec',
+  [Network.Ethereum]: '0x93D00Feb1C13b6bC53EC6fD7B5dd80769dA9451C',
 };
 
 export const TIER3_SALE_ADDRESS = {
   [Network.Mumbai]: '0xE7B46524456Ac7De51b11DEae55601F23e1Ae5dD',
+  [Network.Polygon]: '0xae0C4b263D2f9E68febB091c435085525395DBe4e',
 };
 
 export const getTierBySaleAddress = (address: string) => {
