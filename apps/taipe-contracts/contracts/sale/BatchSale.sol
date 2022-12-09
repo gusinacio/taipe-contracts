@@ -103,8 +103,6 @@ abstract contract BatchSale is SaleDrop, AccessControlUpgradeable, UUPSUpgradeab
         require(!isSoldOut(), "Is sold out");
         uint price = getPrice();
         require(msg.value >= price, "Not enough token sent");
-        (bool succeed, ) = feeRecipient.call{value: msg.value}("");
-        require(succeed, "Failed to transfer");
 
         // effects
         uint batch = currentBatch;
