@@ -19,7 +19,7 @@ contract TaipeSplitterPolygon is PaymentSplitter {
         0xc0254d931eFFaEc6fEeEA007e85DE7a4AB2Bf9e1,
         0x6dB1C3126c8393Bb8559Fb15fb71Da7cAC71179b,
         0x4076FC54c193235Ebc56108C5c5eAB99e4c985EE,
-        0x1Fd3f1eeFA334Ec96b575636B0Ba66D8e1b7D3A4,
+        0xb3d6d28A982D7b16CDB45bF8b24Dbb0f714528d7,
         0x014dE15A2fD980a0DdC8D082900B9EE05664AfD6
     ];
     uint[] private _shares = [
