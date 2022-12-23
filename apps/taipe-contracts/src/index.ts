@@ -76,7 +76,7 @@ export const FEE_RECIPIENT_ADDRESS: { [key in Network]: string } = {
   [Network.Goerli]: '0xC40e55c684B63Ffc3c9127A1156c9d84c62A69ab',
   [Network.Mumbai]: '0x9c5298016D8157aF0837906317E378ce09bc4135',
   [Network.Polygon]: '0x43dbD5C6Fc9F598C0A2Fd8300907a721561f444c',
-  [Network.Ethereum]: '0xC2c179B207fc6ACf5D6AfDd75aC69C19ecB909f1',
+  [Network.Ethereum]: '0x7d223D8b1D284bBF439b5bBA31c2877BDED28Ae5',
 };
 
 export function getNftContract(

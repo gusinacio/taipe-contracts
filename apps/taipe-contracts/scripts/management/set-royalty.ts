@@ -7,9 +7,10 @@ import { isEthereumNetwork, isPolygonNetwork } from '../utils/signers';
 const percentage = 800; // 8%
 
 async function main() {
-  const network = Network.Polygon;
-  const toAddress = FEE_RECIPIENT_ADDRESS[network]
+  const network = Network.Ethereum;
+  const toAddress = FEE_RECIPIENT_ADDRESS[network];
   if (!isAddress(toAddress)) throw new Error('Invalid address');
+  console.log({ toAddress });
   let contract: TaipeNFT;
   if (isEthereumNetwork(network)) {
     contract = await getEthereumContract(network);
