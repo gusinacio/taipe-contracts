@@ -1,5 +1,4 @@
 {
-  "extends": "tsconfig/nest.json",
   "compilerOptions": {
     "target": "es2020",
     "module": "commonjs",

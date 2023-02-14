@@ -5,7 +5,7 @@ import 'hardhat-abi-exporter';
 import '@openzeppelin/hardhat-upgrades';
 import "hardhat-live-fork";
 import { HardhatUserConfig } from 'hardhat/config';
-import { getNetworkConfig } from 'shared';
+import { getNetworkConfig } from 'network';
 
 dotenv.config();
 
